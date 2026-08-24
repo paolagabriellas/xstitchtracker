@@ -1,33 +1,34 @@
+# Cross Stitch Tracker
+
+A web app for tracking cross stitch progress on a pattern. Upload a pattern exported from [FlossCross](https://flosscross.com) as JSON and track your work stitch by stitch, color by color, row by row.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+### What works
+
+- Parses a FlossCross `.json` export and parses the pattern
+- **Grid view** — canvas-rendered pattern grid, click any stitch to mark it done/undone, grid lines every 10 cells
+- **Colors tab** — all thread colors listed in DMC number order with per-color progress bars
+- **Row guide** — select a thread color, set a hoop column range, and work through the pattern row by row:
+  - Displays column numbers for each stitch in the current hoop range for that color
+  - Mark progress by: clicking individual column chips or clicking "Mark all done" button for the current row
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Supabase](https://supabase.com/) (planned)
 
 ## Deploy on Vercel
 
