@@ -36,17 +36,28 @@ export function Tracker({
 
   return (
     <div>
+      <a href="/dashboard" className="text-sm text-ink-3 hover:text-ink mb-4 inline-block">
+        ← Back to patterns
+      </a>
       <div
         className="flex items-baseline gap-3.5 pb-3.5 border-b border-border
                 mb-4 flex-wrap"
       >
         <h1 className="font-serif text-[22px] text-ink flex-1 min-w-0 truncate">
-          {/* {pattern.title} */}
-          xstitchd
+          { pattern.title} 
         </h1>
         <span className="text-xs text-ink-3 whitespace-nowrap">
           {pattern.width} × {pattern.height}
         </span>
+        {saveStatus === "saving" && (
+          <span className="text-xs text-ink-3">saving...</span>
+        )}
+        {saveStatus === "saved" && (
+          <span className="text-xs text-green-700">✓ saved</span>
+        )}
+        {saveStatus === "error" && (
+          <span className="text-xs text-red-600">save failed — retrying</span>
+        )}
       </div>
       {/* stats */}
       <div className="flex gap-2.5 mb-4 flex-wrap">
@@ -83,11 +94,10 @@ export function Tracker({
             onClick={() => setTab(t)}
             className={`px-4 py-2 text-[13px] font-medium -mb-px border-b-2
                       cursor-pointer transition-colors
-                      ${
-                        tab === t
-                          ? "text-accent border-accent"
-                          : "text-ink-3 border-transparent hover:text-ink"
-                      }`}
+                      ${tab === t
+                ? "text-accent border-accent"
+                : "text-ink-3 border-transparent hover:text-ink"
+              }`}
           >
             {t === "grid" ? "Grid" : t === "colors" ? "Colors" : "Row Guide"}
           </button>

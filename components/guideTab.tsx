@@ -111,25 +111,22 @@ export function GuideTab({
   const nextRow = isLastRow ? null : rows[ptr + 1];
 
   function goToPreviousRow() {
-    if (isFirstRow) return;
-    setRowPtr((prev) => ({
-      ...prev,
-      [selectedIdx]: curRow - 1,
-    }));
-  }
+  if (isFirstRow) return;
+  setRowPtr((prev) => ({
+    ...prev,
+    [selectedIdx]: ptr - 1,
+  }));
+}
 
-  function goToNextRowAndMarkDone() {
-    if (isLastRow) return;
-
-    // mark every stitch in the current row as done before advancing
-    const currentStitches = byRow[curRow] ?? [];
-    currentStitches.forEach((s) => onMarkAll(`${s.row},${s.col}`, true));
-
-    setRowPtr((prev) => ({
-      ...prev,
-      [selectedIdx]: curRow + 1,
-    }));
-  }
+function goToNextRowAndMarkDone() {
+  if (isLastRow) return;
+  const currentStitches = byRow[curRow] ?? [];
+  currentStitches.forEach((s) => onMarkAll(`${s.row},${s.col}`, true));
+  setRowPtr((prev) => ({
+    ...prev,
+    [selectedIdx]: ptr + 1,
+  }));
+}
 
   const color = pattern.colors[Number(selectedIdx)];
 
@@ -363,7 +360,7 @@ export function GuideTab({
                 ← Prev
               </button>
               <span className="flex-1 text-center text-xs text-ink-3">
-                row {curRow + 1} of {rows.length}
+                row {ptr + 1} of {rows.length} for this color
               </span>
               <button
                 onClick={goToNextRowAndMarkDone}
