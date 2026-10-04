@@ -42,6 +42,10 @@ export function useDebouncedSave(
       } catch {
         setStatus("error");
         // retry once after 3 seconds
+        try {
+          localStorage.setItem(`xstitch-fallback-${projectId}`, JSON.stringify([...doneSet]));
+        }
+        catch {}
         setTimeout(() => {
           setStatus("idle");
         }, 3000);

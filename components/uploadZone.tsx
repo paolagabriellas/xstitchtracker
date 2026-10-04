@@ -20,10 +20,24 @@ export function UploadZone({ currentCount }: UploadZoneProps) {
 
     try {
       const text = await file.text();
-      const raw = JSON.parse(text);
+      let raw;
+      try {
+        raw = JSON.parse(text);
+      }
+      catch (e) {
+        throw new Error("Invalid JSON file");
+      }
+
+      if (!raw?.model?.images?.[0]){
+        throw new Error("Invalid FlossCross JSON: missing model images");
+      }
 
       // validate it parses correctly
       const pattern = parseFlossCross(raw);
+
+      if (pattern.stitches.length === 0) {
+        throw new Error("Invalid FlossCross JSON: no stitches found");
+      }
 
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
