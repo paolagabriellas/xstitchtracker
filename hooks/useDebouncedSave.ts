@@ -13,6 +13,7 @@ export function useDebouncedSave(
   );
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isFirstRender = useRef(true);
+  const lastSavedAt = useRef(new Date());
   
   useEffect(() => {
     // skip the initial render — don't save what we just loaded
@@ -26,8 +27,21 @@ export function useDebouncedSave(
 
     timeoutRef.current = setTimeout(async () => {
       setStatus("saving");
+      
       try {
         const supabase = createClient();
+        const { data: current } = await supabase
+          .from("projects")
+          .select("updated_at")
+          .eq("id", projectId)
+          .single();
+
+          if (current && new Date(current.updated_at) > lastSavedAt.current) {
+            // If the server has a more recent update, we should not overwrite it.
+            console.warn("Local changes not saved because the server has a more recent update.");
+            setStatus("error");
+            return;
+          }
         const { error } = await supabase
           .from("projects")
           .update({

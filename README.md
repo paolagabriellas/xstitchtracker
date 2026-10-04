@@ -12,6 +12,13 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - **Row guide** — select a thread color, set a hoop column range, and work through the pattern row by row:
   - Displays column numbers for each stitch in the current hoop range for that color
   - Mark progress by: clicking individual column chips or clicking "Mark all done" button for the current row
+- **User accounts** — register and log in with email/password with Supabase Auth
+- **Multi Project per Account** — dashboard to view, upload, delete patterns (up to 3, to match flosscross)
+- **Error handling** — validation for pattern upload, corrupt pattern issues and auto rety for save failures 
+
+## Working on 
+- Mobile responsiveness
+- Pattern renaming
 
 ## Getting Started
 
@@ -20,6 +27,12 @@ First, run the development server:
 ```bash
 npm install
 npm run dev
+```
+
+Create `.env.local` at the project root:
+
+``` NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
