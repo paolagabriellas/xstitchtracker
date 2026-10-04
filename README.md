@@ -2,7 +2,8 @@
 
 A web app for tracking cross stitch progress on a pattern. Upload a pattern exported from [FlossCross](https://flosscross.com) as JSON and track your work stitch by stitch, color by color, row by row.
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**Live at [https://xstitchtracker.vercel.app/](https://your-app.vercel.app)**
+
 
 ### What works
 
