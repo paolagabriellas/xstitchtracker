@@ -161,8 +161,36 @@ function goToNextRowAndMarkDone() {
                    bg-parch text-ink font-sans text-[13px]"
           value={selectedIdx}
           onChange={(e) => {
-            setSelectedIdx(e.target.value);
-            setRowPtr({});
+            const newIdx = e.target.value;
+            setSelectedIdx(newIdx);
+
+            if (newIdx){
+              const fi = Number(newIdx);
+              const stitchesInRange = pattern.stitches.filter(
+                (s) => s.colorIdx === fi && s.col >= colFrom && s.col <= colTo,
+              );
+              const grouped: Record<number, Stitch[]> = {};
+              for (const s of stitchesInRange) {
+                if (!grouped[s.row]) {
+                  grouped[s.row] = [];
+                }
+                grouped[s.row].push(s);
+              }
+              const sortedRows = Object.keys(grouped)
+                .map(Number)
+                .sort((a, b) => a - b);
+              
+              const firstIncomplete = sortedRows.findIndex(
+                (r) => !grouped[r].every((s) => doneSet.has(`${s.row},${s.col}`))
+              );
+              setRowPtr((prev) => ({
+                ...prev,
+                [newIdx]: firstIncomplete >= 0 ? firstIncomplete : sortedRows.length - 1,
+              }));
+            }
+            else {
+              setRowPtr({});
+            }
           }}
         >
           <option value="">— choose a color —</option>

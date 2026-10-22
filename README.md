@@ -2,7 +2,7 @@
 
 A web app for tracking cross stitch progress on a pattern. Upload a pattern exported from [FlossCross](https://flosscross.com) as JSON and track your work stitch by stitch, color by color, row by row.
 
-**Live at [https://xstitchtracker.vercel.app/](https://your-app.vercel.app)**
+**Live at [https://xstitchtracker.vercel.app/](https://xstitchtracker.vercel.app)**
 
 
 ### What works
@@ -20,6 +20,7 @@ A web app for tracking cross stitch progress on a pattern. Upload a pattern expo
 ## Working on 
 - Mobile responsiveness
 - Pattern renaming
+- greater area for color section, color should start on first unmarked, 
 
 ## Getting Started
 
