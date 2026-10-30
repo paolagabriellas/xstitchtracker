@@ -3,11 +3,8 @@ import { Pattern } from "@/lib/types";
 import { GridTab } from "./gridTab";
 import { ColorsTab } from "./colorsTab";
 import { GuideTab } from "./guideTab";
-import { createClient } from "@/lib/supabase/client";
 
 interface TrackerProps {
-  projectId: string;
-  title: string;
   pattern: Pattern;
   doneSet: Set<string>;
   onToggle: (key: string) => void;
@@ -20,27 +17,9 @@ export function Tracker({
   doneSet,
   onToggle,
   onMarkAll,
-  title: initialTitle,
-  projectId,
   saveStatus,
 }: TrackerProps) {
   const [tab, setTab] = useState<"grid" | "colors" | "guide">("grid");
-  const [editing, setEditing] = useState(false);
-  const [title, setTitle] = useState(initialTitle);
-
-  const saveTitle = async (newTitle: string) => {
-    const trimmed = newTitle.trim();
-    if (!trimmed || trimmed === pattern.title) {
-      setEditing(false);
-      return;
-    }
-    setTitle(trimmed);
-    setEditing(false);
-
-    const supabase = createClient();
-    await supabase.from("projects").update({ title: trimmed }).eq("id", projectId);
-  }
-
 
   const stats = useMemo(() => {
     const total = pattern.stitches.length;
@@ -56,13 +35,12 @@ export function Tracker({
   }, [pattern, doneSet]);
 
   return (
-    <div>
-      <a href="/dashboard" className="text-sm text-ink-3 hover:text-ink mb-4 inline-block">
+    <div className="flex-1 flex flex-col min-h-0">
+      {/* <a href="/dashboard" className="text-sm text-ink-3 hover:text-ink mb-1 inline-block shrink-0">
         ← Back to patterns
       </a>
       <div
-        className="flex items-baseline gap-3.5 pb-3.5 border-b border-border
-                mb-4 flex-wrap"
+        className="flex items-baseline gap-3.5 pb-1.5 border-b border-border mb-1.5 flex-wrap shrink-0"
       >
         {editing ? (
           <input
@@ -77,7 +55,7 @@ export function Tracker({
             }}
           />
         ) : (
-          <div className="flex items-baseline gap-2 flex-1 min-w-0">
+          <div className="flex items-baseline gap-3.5 pb-2 border-b border-border mb-2 flex-wrap shrink-0">
             <h1 className="font-serif text-[22px] text-ink truncate">
               {title}
             </h1>
@@ -102,14 +80,14 @@ export function Tracker({
           <span className="text-xs text-ink-3">saving...</span>
         )}
         {saveStatus === "saved" && (
-          <span className="text-xs text-green-700">✓ saved</span>
+          <span className="text-xs text-moss">✓ saved</span>
         )}
         {saveStatus === "error" && (
-          <span className="text-xs text-red-600">save failed — retrying</span>
+          <span className="text-xs text-danger">save failed — retrying</span>
         )}
-      </div>
+      </div> */}
       {/* stats */}
-      <div className="flex gap-2.5 mb-4 flex-wrap">
+      <div className="flex gap-2 mb-1.5 flex-wrap shrink-0">
         {[
           { val: stats.total.toLocaleString(), label: "total stitches" },
           { val: stats.done.toLocaleString(), label: "completed" },
@@ -118,17 +96,16 @@ export function Tracker({
         ].map((s) => (
           <div
             key={s.label}
-            className="bg-parch border border-border rounded-[10px] px-4 py-2.5
-                      flex-1 min-w-[90px]"
+            className="bg-parch border border-border rounded-lg px-3 py-1.5 flex-1 min-w-[70px]"
           >
-            <div className="font-serif text-[22px]">{s.val}</div>
-            <div className="text-[11px] text-ink-3 mt-0.5">{s.label}</div>
+            <div className="font-serif text-base">{s.val}</div>
+            <div className="text-[10px] text-ink-3">{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* progress bar */}
-      <div className="h-[5px] bg-linen-3 rounded-full mb-4 overflow-hidden">
+      <div className="h-1 bg-linen-3 rounded-full mb-1.5 overflow-hidden shrink-0">
         <div
           className="h-full bg-accent rounded-full transition-[width] duration-400"
           style={{ width: stats.pct + "%" }}
@@ -136,7 +113,7 @@ export function Tracker({
       </div>
 
       {/* tabs */}
-      <div className="flex border-b border-border mb-5">
+      <div className="flex border-b border-border mb-2 shrink-0">
         {(["grid", "colors", "guide"] as const).map((t) => (
           <button
             key={t}
@@ -151,25 +128,38 @@ export function Tracker({
             {t === "grid" ? "Grid" : t === "colors" ? "Colors" : "Row Guide"}
           </button>
         ))}
+        <div className="flex-1" />
+  {saveStatus === "saving" && <span className="text-[11px] text-ink-3 self-center">saving...</span>}
+  {saveStatus === "saved" && <span className="text-[11px] text-moss self-center">✓ saved</span>}
+  {saveStatus === "error" && <span className="text-[11px] text-danger self-center">save failed</span>}
       </div>
-      {/* tab content — add this block */}
+      {/* tab content */}
+      <div className="flex-1 min-h-0 flex flex-col">
       {tab === "grid" && (
-        <>
+        <div className="flex-1 min-h-0 pb-4 flex flex-col">
           <GridTab pattern={pattern} doneSet={doneSet} onToggle={onToggle} />
-          <p className="text-[11px] text-ink-3 mt-2">
+          <p className="text-[11px] text-ink-3 mt-2 shrink-0">
             Click any stitch to mark it done. Grid lines every 10 cells.
           </p>
-        </>
+        </div>
       )}
-      {tab === "colors" && <ColorsTab pattern={pattern} doneSet={doneSet} />}
+      {tab === "colors" && (
+        <div className="flex-1 min-h-0 overflow-auto">
+          <ColorsTab pattern={pattern} doneSet={doneSet} />
+        </div>
+      )}
       {tab === "guide" && (
+        <div className="flex-1 min-h-0 flex flex-col pb-4 overflow-y-auto">
         <GuideTab
           pattern={pattern}
           doneSet={doneSet}
           onToggle={onToggle}
           onMarkAll={onMarkAll}
         />
+        </div>
       )}
+      </div>
+      
     </div>
   );
 }

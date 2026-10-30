@@ -36,7 +36,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
       </div>
       <button
         onClick={() => setShowDelete(true)}
-        className="text-sm text-ink-3 hover:text-red-600"
+        className="text-sm text-ink-3 hover:text-danger"
       >
         Delete
       </button>

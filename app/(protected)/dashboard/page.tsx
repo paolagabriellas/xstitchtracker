@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { ProjectCard } from "@/components/projectCard";
 import { UploadZone } from "@/components/uploadZone";
+import { NavBar } from "@/components/navbar";
 
 export default async function DashboardPage() {
 
@@ -17,7 +18,9 @@ export default async function DashboardPage() {
   const atLimit = projectList.length >= MAX_PROJECTS;
 
   return (
-    <div>
+    <>
+    <NavBar />
+    <div className="flex-1 min-h-0 max-w-5xl w-full mx-auto px-4 py-4">
       <h1 className="font-serif text-2xl mb-6">Your patterns</h1>
 
       <div className="flex flex-col gap-4 mb-8">
@@ -41,5 +44,7 @@ export default async function DashboardPage() {
         <UploadZone currentCount={projectList.length} />
       )}
     </div>
+      </>
   );
+
 }

@@ -113,16 +113,20 @@ export function GridTab({ pattern, doneSet, onToggle }: GridProps) {
   );
 
   return (
-    <div>
-      <div className="overflow-auto border border-border rounded-xl bg-parch max-h-[calc(100vh-280px)] w-fit">
+    <div className="flex-1 min-h-0 flex flex-col">
+      <div className="border border-border rounded-xl bg-parch min-h-0 overflow-y-auto overflow-x-hidden">
         <canvas
           ref={canvasRef}
           width={pattern.width * CELL}
           height={pattern.height * CELL}
           onClick={handleClick}
           title="Click to toggle stitch"
-          className="block cursor-crosshair max-w-full"
-          style={{ imageRendering: "pixelated" }}
+          className="grid-canvas"
+          style={{
+            display: "block",
+            width: "100%",
+            imageRendering: "pixelated"
+          }}
         />
       </div>
     </div>

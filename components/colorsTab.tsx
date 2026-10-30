@@ -35,7 +35,7 @@ export function ColorsTab({ pattern, doneSet }: ColorsTabProps) {
     .sort((a, b) => dmcSortKey(a[1].dmc).localeCompare(dmcSortKey(b[1].dmc)));
 
   return (
-    <div className="flex flex-col gap-2 overflow-auto max-h-[calc(100vh-280px)]">
+    <div className="flex flex-col gap-2 overflow-auto flex-1 min-h-0 h-full">
       {sorted.map(([idx, color]) => {
         const s: ColorStats = stats[idx] || { total: 0, done: 0 };
         const pct = s.total ? Math.round((s.done / s.total) * 100) : 0;

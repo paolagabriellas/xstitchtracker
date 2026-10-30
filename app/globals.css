@@ -1,18 +1,36 @@
 @import "tailwindcss";
 
+/* sampler palette: white aida, indigo floss, garnet red, moss, old gold */
 @theme {
-  --color-linen: #f5f0e8;
-  --color-linen-2: #ede7d8;
-  --color-linen-3: #e0d8c8;
-  --color-ink: #2a2118;
-  --color-ink-2: #4a3f30;
-  --color-ink-3: #7a6e5f;
-  --color-accent: #8b5e3c;
-  --color-done: #b8a898;
-  --color-border: #c8bfb0;
-  --color-parch: #fdfaf6;
+  --color-linen: #f6f5f2;
+  --color-linen-2: #ecebe6;
+  --color-linen-3: #dfded7;
+  --color-ink: #1f2a44;
+  --color-ink-2: #3a4560;
+  --color-ink-3: #646a7d;
+  --color-accent: #9e2a3a;
+  --color-accent-hover: #7f1f2d;
+  --color-done: #b3b2ac;
+  --color-border: #d3d2ca;
+  --color-parch: #fdfdfb;
+
+  --color-moss: #56683f;
+  --color-moss-bg: #e3e8d5;
+  --color-gold: #8a6a1c;
+  --color-gold-bg: #f2e7c6;
+  --color-danger: #a8321f;
 
   --font-sans: "DM Sans", sans-serif;
   --font-serif: "DM Serif Display", serif;
   --font-mono: "DM Mono", monospace;
+}
+
+@layer base {
+  /* faint even-weave grid, like aida cloth */
+  body {
+    background-image:
+      linear-gradient(to right, rgb(31 42 68 / 0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(31 42 68 / 0.025) 1px, transparent 1px);
+    background-size: 6px 6px;
+  }
 }

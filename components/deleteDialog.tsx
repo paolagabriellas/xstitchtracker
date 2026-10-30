@@ -31,7 +31,7 @@ export function DeleteDialog({ projectId, title, onClose }: DeleteDialogProps) {
         <div className="flex gap-3 justify-end">
           <button onClick={onClose} className="text-sm px-4 py-2">Cancel</button>
           <button onClick={handleDelete}
-            className="text-sm px-4 py-2 bg-red-600 text-white rounded-lg">
+            className="text-sm px-4 py-2 bg-danger text-white rounded-lg">
             Delete
           </button>
         </div>

@@ -95,7 +95,7 @@ export function UploadZone({ currentCount }: UploadZoneProps) {
         />
       </div>
       {error && (
-        <p className="text-sm text-red-600 mt-3 text-center">{error}</p>
+        <p className="text-sm text-danger mt-3 text-center">{error}</p>
       )}
     </div>
   );

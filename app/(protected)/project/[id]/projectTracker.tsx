@@ -6,6 +6,8 @@ import { Tracker } from "@/components/tracker";
 import { useDoneSet } from "@/hooks/useDoneSet";
 import { useDebouncedSave } from "@/hooks/useDebouncedSave";
 import { Toast } from "@/components/toast";
+import { NavBar } from "@/components/navbar";
+import { ProjectNavBar } from "@/components/projectNavBar";
 
 interface ProjectTrackerProps {
   projectId: string;
@@ -60,10 +62,15 @@ export function ProjectTracker({
   }
 
   return (
-    <>
+    <div className="flex-1 flex flex-col min-h-0">
+    <ProjectNavBar
+      projectId={projectId}
+      projectTitle={projectTitle}
+      width={pattern.width}
+      height={pattern.height}
+    />
+    <div className="flex-1 min-h-0 max-w-5xl w-full mx-auto px-4 py-3 flex flex-col">
       <Tracker
-        projectId={projectId}
-        title={projectTitle}
         pattern={pattern}
         doneSet={doneSet}
         onToggle={toggle}
@@ -75,6 +82,7 @@ export function ProjectTracker({
         type="error"
         visible={saveStatus === "error"}
       />
-    </>
+      </div>
+    </div>  
   );
 }

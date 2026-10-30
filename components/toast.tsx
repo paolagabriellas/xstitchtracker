@@ -15,8 +15,8 @@ export function Toast({ message, type, visible }: ToastProps) {
                   px-4 py-2.5 rounded-lg text-sm font-medium shadow-lg
                   transition-opacity duration-300
                   ${type === "error"
-                    ? "bg-red-600 text-white"
-                    : "bg-green-700 text-white"
+                    ? "bg-danger text-white"
+                    : "bg-moss text-white"
                   }`}
     >
       {message}

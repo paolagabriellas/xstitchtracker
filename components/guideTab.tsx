@@ -11,7 +11,7 @@ interface GuideTabProps {
 
 interface CoordProps {
   stitches: Stitch[];
-  type: "previous" | "current" | "next";
+  type: "current" | "other";
   doneSet: Set<string>;
   onToggle: (key: string) => void;
 }
@@ -21,7 +21,7 @@ function RenderCoords({ stitches, type, doneSet, onToggle }: CoordProps) {
     <div className="flex flex-wrap gap-1">
       {stitches.map((s) => {
         const key = `${s.row},${s.col}`;
-        const isDone = type === "previous" || doneSet.has(key);
+        const isDone = doneSet.has(key);
         const isClickable = type === "current";
 
         return (
@@ -107,8 +107,20 @@ export function GuideTab({
   const isLastRow = ptr >= rows.length - 1;
 
   const curRow = rows[ptr];
-  const prevRow = isFirstRow ? null : rows[ptr - 1];
-  const nextRow = isLastRow ? null : rows[ptr + 1];
+
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const curRowRef = useRef<HTMLDivElement | null>(null);
+
+  // keep the current row centered in the list
+  useEffect(() => {
+    const list = listRef.current;
+    const el = curRowRef.current;
+    if (!list || !el) return;
+    list.scrollTo({
+      top: el.offsetTop - (list.clientHeight - el.offsetHeight) / 2,
+      behavior: "smooth",
+    });
+  }, [selectedIdx, ptr, colFrom, colTo]);
 
   function goToPreviousRow() {
   if (isFirstRow) return;
@@ -150,14 +162,15 @@ function goToNextRowAndMarkDone() {
     byRow[curRow]?.every((s) => doneSet.has(`${s.row},${s.col}`));
 
   return (
-    <div>
-      {/* color selector */}
-      <div className="flex gap-2.5 items-center mb-3 flex-wrap">
-        <label className="text-[13px] text-ink-3 font-medium whitespace-nowrap">
+    <div className="flex-1 min-h-0 flex flex-col">
+      {/* color selector + hoop range */}
+      <div className="flex gap-x-4 gap-y-2 items-center mb-2 flex-wrap shrink-0">
+      <div className="flex gap-2 items-center flex-1 min-w-[240px]">
+        <label className="text-xs text-ink-3 font-medium whitespace-nowrap">
           Thread color:
         </label>
         <select
-          className="flex-1 min-w-[200px] px-3 py-2 border border-border rounded-lg
+          className="flex-1 min-w-0 px-2.5 py-1.5 border border-border rounded-lg
                    bg-parch text-ink font-sans text-[13px]"
           value={selectedIdx}
           onChange={(e) => {
@@ -202,17 +215,34 @@ function goToNextRowAndMarkDone() {
         </select>
       </div>
 
-      {/* hoop range */}
-      <div
-        className="flex gap-2 items-center bg-parch border border-border
-                    rounded-[10px] px-3.5 py-2.5 mb-3.5 flex-wrap"
-      >
+      <div className="flex gap-2 items-center">
         <label className="text-xs text-ink-3 font-medium whitespace-nowrap">
           Hoop columns:
         </label>
+        <span className="relative group inline-flex">
+          <button
+            type="button"
+            aria-label="What are hoop columns?"
+            className="w-4 h-4 rounded-full border border-ink-3 text-ink-3 text-[10px]
+                     leading-none font-serif italic inline-flex items-center justify-center
+                     hover:text-accent hover:border-accent focus:outline-none
+                     focus-visible:text-accent focus-visible:border-accent"
+          >
+            i
+          </button>
+          <span
+            role="tooltip"
+            className="pointer-events-none absolute left-1/2 top-full mt-1.5 -translate-x-1/2 z-10
+                     w-56 rounded-md bg-ink text-parch text-[11px] leading-snug px-2.5 py-1.5
+                     shadow-lg opacity-0 transition-opacity
+                     group-hover:opacity-100 group-focus-within:opacity-100"
+          >
+            Limit the guide to the columns currently in your hoop.
+          </span>
+        </span>
         <input
           type="number"
-          className="w-16 px-2 py-1.5 border border-border rounded-md
+          className="w-16 px-2 py-1 border border-border rounded-md
                    bg-linen font-mono text-[13px] text-center"
           min={1}
           max={pattern.width}
@@ -225,7 +255,7 @@ function goToNextRowAndMarkDone() {
         <span className="text-[13px] text-ink-3">to</span>
         <input
           type="number"
-          className="w-16 px-2 py-1.5 border border-border rounded-md
+          className="w-16 px-2 py-1 border border-border rounded-md
                    bg-linen font-mono text-[13px] text-center"
           min={1}
           max={pattern.width}
@@ -236,35 +266,35 @@ function goToNextRowAndMarkDone() {
           }}
         />
         <span className="text-[13px] text-ink-3">of {pattern.width}</span>
-        <span className="text-[11px] text-ink-3 flex-1 min-w-full mt-0.5">
-          Limit guide to columns currently in your hoop.
-        </span>
+      </div>
       </div>
 
       {/* empty states */}
       {!selectedIdx ? (
-        <div className="py-10 text-center text-ink-3 text-[13px] leading-relaxed">
+        <div className="flex-1 flex items-center justify-center text-ink-3 text-[13px]">
+          <div className="text-center">
           <span className="text-[30px] block mb-2">🪡</span>
           Select a thread color above.
+          </div>
         </div>
       ) : rows.length === 0 ? (
-        <div className="py-10 text-center text-ink-3 text-[13px]">
+        <div className="flex-1 flex items-center justify-center text-ink-3 text-[13px]">
           No stitches for this color in columns {colFrom + 1}–{colTo + 1}.
         </div>
       ) : (
-        <div className="border border-border rounded-xl overflow-hidden flex flex-col max-h-[calc(100vh-380px)]">
+        <div className="border border-border rounded-xl overflow-hidden bg-parch flex flex-col flex-1 min-h-0">
           {/* panel header */}
-          <div className="flex items-center gap-3 px-4 py-3.5 bg-linen-2 border-b border-border shrink-0">
+          <div className="flex items-center gap-2.5 px-3 py-2 bg-linen-2 border-b border-border shrink-0">
             <div
-              className="w-8 h-8 rounded-full border-[1.5px] border-black/12
+              className="w-6 h-6 rounded-full border-[1.5px] border-black/12
                        shrink-0"
               style={{ background: color?.hex }}
             />
-            <div className="flex-1">
+            <div className="flex-1 flex items-baseline gap-x-3 flex-wrap">
               <div className="font-medium text-sm">
                 {color?.name} · DMC {color?.dmc}
               </div>
-              <div className="text-xs text-ink-3 mt-0.5">
+              <div className="text-xs text-ink-3">
                 {doneStitches} of {totalStitches} done · {rows.length} rows
                 {colFrom > 0 || colTo < pattern.width - 1
                   ? ` · cols ${colFrom + 1}–${colTo + 1}`
@@ -273,68 +303,73 @@ function goToNextRowAndMarkDone() {
             </div>
           </div>
 
-          {/* panel body */}
-          <div className="p-4 flex flex-col gap-3 overflow-auto flex-1 min-h-0">
-            {/* previous row */}
-            {prevRow !== null && (
-              <div
-                className="rounded-[10px] px-3.5 py-3 bg-linen-2
-                            border border-linen-3"
-              >
-                <div
-                  className="text-[11px] font-medium text-ink-3 uppercase
-                              tracking-wide mb-2"
-                >
-                  Previous · row {prevRow + 1}
-                </div>
-                <RenderCoords
-                  stitches={byRow[prevRow]}
-                  type="previous"
-                  doneSet={doneSet}
-                  onToggle={onToggle}
-                />
-              </div>
-            )}
+          {/* panel body: every row for this color, scrollable */}
+          <div
+            ref={listRef}
+            className="relative p-2.5 flex flex-col gap-2 overflow-auto flex-1 min-h-[240px]"
+          >
+            {rows.map((r, i) => {
+              if (i !== ptr) {
+                const rowDone = byRow[r].every((s) =>
+                  doneSet.has(`${s.row},${s.col}`),
+                );
+                return (
+                  <div
+                    key={r}
+                    onClick={() =>
+                      setRowPtr((prev) => ({ ...prev, [selectedIdx]: i }))
+                    }
+                    className="rounded-[10px] px-3 py-2 bg-linen-2 border border-linen-3
+                               cursor-pointer hover:border-border"
+                  >
+                    <div
+                      className="text-[11px] font-medium text-ink-3 uppercase
+                                  tracking-wide mb-1.5"
+                    >
+                      {i === ptr + 1 ? "Up next · " : ""}row {r + 1}
+                      {rowDone ? " ✓" : ""}
+                    </div>
+                    <RenderCoords
+                      stitches={byRow[r]}
+                      type="other"
+                      doneSet={doneSet}
+                      onToggle={onToggle}
+                    />
+                  </div>
+                );
+              }
 
-            {/* current row */}
+              return (
             <div
-              className="rounded-[10px] px-3.5 py-3 bg-parch
-                          border border-accent"
+              key={r}
+              ref={curRowRef}
+              className="rounded-[10px] px-3 py-2 bg-parch
+                          border border-accent shrink-0"
             >
               <div
                 className="text-[11px] font-medium text-ink-3 uppercase
-                            tracking-wide mb-2 flex items-center gap-2"
+                            tracking-wide mb-1.5 flex items-center gap-2"
               >
                 Current · row {curRow + 1}
                 {allCurrentDone ? (
                   <span
                     className="text-[10px] px-2 py-0.5 rounded-full
-                                 bg-green-100 text-green-700 font-medium"
+                                 bg-moss-bg text-moss font-medium"
                   >
                     all done ✓
                   </span>
                 ) : (
                   <span
                     className="text-[10px] px-2 py-0.5 rounded-full
-                                 bg-amber-100 text-amber-700 font-medium"
+                                 bg-gold-bg text-gold font-medium"
                   >
                     in progress
                   </span>
                 )}
-              </div>
-
-              <RenderCoords
-                stitches={byRow[curRow]}
-                type="current"
-                doneSet={doneSet}
-                onToggle={onToggle}
-              />
-
-              {/* mark all / unmark all */}
-              <div className="mt-2.5">
+                {/* mark all / unmark all */}
                 <button
-                  className="text-xs px-3 py-1 border border-border rounded-lg
-                           bg-parch hover:bg-linen-2"
+                  className="ml-auto normal-case tracking-normal text-[11px] px-2.5 py-0.5
+                           border border-border rounded-lg bg-parch hover:bg-linen-2"
                   onClick={() => {
                     const currentStitches = byRow[curRow] ?? [];
                     if (allCurrentDone) {
@@ -351,33 +386,20 @@ function goToNextRowAndMarkDone() {
                   {allCurrentDone ? "Unmark all" : "Mark all done"}
                 </button>
               </div>
+
+              <RenderCoords
+                stitches={byRow[curRow]}
+                type="current"
+                doneSet={doneSet}
+                onToggle={onToggle}
+              />
             </div>
-
-            {/* up next row */}
-            {nextRow !== null && (
-              <div
-                className="rounded-[10px] px-3.5 py-3 bg-linen-2
-                            border border-linen-3"
-              >
-                <div
-                  className="text-[11px] font-medium text-ink-3 uppercase
-                              tracking-wide mb-2"
-                >
-                  Up next · row {nextRow + 1}
-                </div>
-
-                <RenderCoords
-                  stitches={byRow[nextRow]}
-                  type="next"
-                  doneSet={doneSet}
-                  onToggle={onToggle}
-                />
-              </div>
-            )}
+              );
+            })}
           </div>
-          <div className="px-4 py-3 border-t border-border shrink-0">
+          <div className="px-3 py-2 border-t border-border shrink-0">
             {/* navigation */}
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center shrink-0">
               <button
                 onClick={goToPreviousRow}
                 disabled={isFirstRow}
@@ -395,7 +417,7 @@ function goToNextRowAndMarkDone() {
                 disabled={isLastRow}
                 className="text-[13px] font-medium px-4 py-1.5 rounded-lg
                          bg-accent text-white border border-accent
-                         hover:bg-[#7a5234] disabled:opacity-40
+                         hover:bg-accent-hover disabled:opacity-40
                          disabled:cursor-not-allowed"
               >
                 Next & mark done →

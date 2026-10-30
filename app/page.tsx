@@ -19,7 +19,7 @@ export default async function LandingPage() {
         <Link
           href="/register"
           className="px-6 py-2.5 bg-accent text-white rounded-lg text-sm font-medium
-                   hover:bg-[#7a5234]"
+                   hover:bg-accent-hover"
         >
           Get started
         </Link>
