@@ -3,8 +3,11 @@ import { Pattern } from "@/lib/types";
 import { GridTab } from "./gridTab";
 import { ColorsTab } from "./colorsTab";
 import { GuideTab } from "./guideTab";
+import { createClient } from "@/lib/supabase/client";
 
 interface TrackerProps {
+  projectId: string;
+  title: string;
   pattern: Pattern;
   doneSet: Set<string>;
   onToggle: (key: string) => void;
@@ -17,9 +20,27 @@ export function Tracker({
   doneSet,
   onToggle,
   onMarkAll,
+  title: initialTitle,
+  projectId,
   saveStatus,
 }: TrackerProps) {
   const [tab, setTab] = useState<"grid" | "colors" | "guide">("grid");
+  const [editing, setEditing] = useState(false);
+  const [title, setTitle] = useState(initialTitle);
+
+  const saveTitle = async (newTitle: string) => {
+    const trimmed = newTitle.trim();
+    if (!trimmed || trimmed === pattern.title) {
+      setEditing(false);
+      return;
+    }
+    setTitle(trimmed);
+    setEditing(false);
+
+    const supabase = createClient();
+    await supabase.from("projects").update({ title: trimmed }).eq("id", projectId);
+  }
+
 
   const stats = useMemo(() => {
     const total = pattern.stitches.length;
@@ -43,9 +64,37 @@ export function Tracker({
         className="flex items-baseline gap-3.5 pb-3.5 border-b border-border
                 mb-4 flex-wrap"
       >
-        <h1 className="font-serif text-[22px] text-ink flex-1 min-w-0 truncate">
-          { pattern.title} 
-        </h1>
+        {editing ? (
+          <input
+            autoFocus
+            defaultValue={title}
+            className="font-serif text-[22px] text-ink flex-1 min-w-0
+             bg-transparent border-b border-accent outline-none"
+            onBlur={(e) => saveTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") saveTitle(e.currentTarget.value);
+              if (e.key === "Escape") setEditing(false);
+            }}
+          />
+        ) : (
+          <div className="flex items-baseline gap-2 flex-1 min-w-0">
+            <h1 className="font-serif text-[22px] text-ink truncate">
+              {title}
+            </h1>
+            <button
+              onClick={() => setEditing(true)}
+              className="text-ink-3 hover:text-accent shrink-0"
+              title="Rename project"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                <path d="m15 5 4 4" />
+              </svg>
+            </button>
+          </div>
+        )}
         <span className="text-xs text-ink-3 whitespace-nowrap">
           {pattern.width} × {pattern.height}
         </span>

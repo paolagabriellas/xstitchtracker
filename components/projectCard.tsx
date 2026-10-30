@@ -18,8 +18,6 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   const [showDelete, setShowDelete] = useState(false);
   const totalStitches = project.width * project.height;
-  // this is approximate — not all cells have stitches.
-  // for exact count you'd need pattern_data, but for a dashboard card this is fine
   const doneCount = project.done_keys.length;
 
   return (

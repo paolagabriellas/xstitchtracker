@@ -22,6 +22,7 @@ export default async function ProjectPage({
   return (
     <ProjectTracker
       projectId={project.id}
+      projectTitle={project.title}
       rawPattern={project.pattern_data}
       initialDoneKeys={project.done_keys}
     />

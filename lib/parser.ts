@@ -18,7 +18,7 @@ export function parseFlossCross(json: any): Pattern {
   if (!layer?.cross) throw new Error("No cross stitch layer found.");
 
   const cross = layer.cross;
-  const title = json.dv || json.modelId?.slice(0, 8) || "My Pattern";
+  const title = "";
 
   const colors: Record<number, ColorInfo> = {};
   flossIndexes.forEach((f: any, i: number) => {

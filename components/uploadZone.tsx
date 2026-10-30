@@ -48,10 +48,10 @@ export function UploadZone({ currentCount }: UploadZoneProps) {
         .from("projects")
         .insert({
           user_id: user.id,
-          title: pattern.title,
+          title: `Project ${currentCount + 1}`,
           width: pattern.width,
           height: pattern.height,
-          pattern_data: raw, // store the full FlossCross JSON
+          pattern_data: raw, 
           done_keys: [],
         })
         .select("id")

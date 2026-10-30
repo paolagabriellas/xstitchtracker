@@ -9,12 +9,14 @@ import { Toast } from "@/components/toast";
 
 interface ProjectTrackerProps {
   projectId: string;
+  projectTitle: string;
   rawPattern: any;
   initialDoneKeys: string[];
 }
 
 export function ProjectTracker({
   projectId,
+  projectTitle,
   rawPattern,
   initialDoneKeys,
 }: ProjectTrackerProps) {
@@ -40,37 +42,39 @@ export function ProjectTracker({
         }
         localStorage.removeItem(`xstitch-fallback-${projectId}`);
       }
-    } catch {}
+    } catch { }
   }, []);
 
   if (!pattern) {
     return (
       <div className="py-20 text-center">
-      <p className="text-lg mb-2">Something went wrong</p>
-      <p className="text-sm text-ink-3 mb-4">
-        This pattern's data couldn't be loaded. It may be corrupted.
-      </p>
-      <a href="/dashboard" className="text-sm text-accent hover:underline">
-        ← Back to patterns
-      </a>
-    </div>
+        <p className="text-lg mb-2">Something went wrong</p>
+        <p className="text-sm text-ink-3 mb-4">
+          This pattern's data couldn't be loaded. It may be corrupted.
+        </p>
+        <a href="/dashboard" className="text-sm text-accent hover:underline">
+          ← Back to patterns
+        </a>
+      </div>
     );
   }
 
   return (
     <>
-    <Tracker
-      pattern={pattern}
-      doneSet={doneSet}
-      onToggle={toggle}
-      onMarkAll={markAll}
-      saveStatus={saveStatus}
-    />
-    <Toast
-    message="Save failed. Retrying..."
-    type="error"
-    visible={saveStatus === "error"}
-  />  
-  </>
+      <Tracker
+        projectId={projectId}
+        title={projectTitle}
+        pattern={pattern}
+        doneSet={doneSet}
+        onToggle={toggle}
+        onMarkAll={markAll}
+        saveStatus={saveStatus}
+      />
+      <Toast
+        message="Save failed. Retrying..."
+        type="error"
+        visible={saveStatus === "error"}
+      />
+    </>
   );
 }
